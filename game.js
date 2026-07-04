@@ -1,3 +1,6 @@
+let humanScore = 0;
+let computerScore = 0;
+
 function intRPStoStr(i) {
   switch (i) {
     case 0:
@@ -40,33 +43,49 @@ function getHumanChoice() {
   );
 }
 
-function playGame() {
-  let humanScore = 0;
-  let computerScore = 0;
-  function playRound(humanChoice, computerChoice) {
-    switch (
-      (strRPStoInt(humanChoice.toLocaleLowerCase()) -
-        strRPStoInt(computerChoice) +
-        3) %
-      3
-    ) {
-      case 0: // tie
-        console.log("tie");
-        break;
-      case 1: // human wins
-        humanScore++;
-        console.log("You win! " + humanChoice + " beats " + computerChoice);
-        break;
-      case 2: // computer wins
-        computerScore++;
-        console.log("You lose! " + computerChoice + " beats " + humanChoice);
-        break;
-      default:
-        break;
-    }
+function playRound(humanChoice, computerChoice) {
+  const para = document.createElement("p");
+  switch (
+    (strRPStoInt(humanChoice.toLocaleLowerCase()) -
+      strRPStoInt(computerChoice) +
+      3) %
+    3
+  ) {
+    case 0: // tie
+      para.textContent = "Tie: you and the computer both picked " + humanChoice;
+      console.log("tie");
+      break;
+    case 1: // human wins
+      para.textContent = "You win! " + humanChoice + " beats " + computerChoice;
+      humanScore++;
+      break;
+    case 2: // computer wins
+      para.textContent =
+        "You lose! " + computerChoice + " beats " + humanChoice;
+      computerScore++;
+      break;
+    default:
+      break;
   }
+  para.textContent = para.textContent + " " + humanScore + "-" + computerScore;
+  textOutput = document.querySelector("#textOutput");
+  textOutput.appendChild(para);
 
-  for (let iRound = 0; iRound < 5; iRound++){
-    playRound(getHumanChoice(), getComputerChoice());
+  // End condition is rough: if you keep playing, you can get the other win message
+  if (humanScore >= 5) {
+    const paraEnd = document.createElement("p");
+    paraEnd.textContent =
+      "You win but the computer guessed randomly so you just got lucky. Your success is empty. womp womp womp";
+    textOutput.appendChild(paraEnd);
+  } else if (computerScore >= 5) {
+    const paraEnd = document.createElement("p");
+    paraEnd.textContent = "You lose womp womp womp";
+    textOutput.appendChild(paraEnd);
   }
+}
+
+for (const choice of ["rock", "paper", "scissors"]) {
+  document
+    .querySelector("#" + choice)
+    .addEventListener("click", () => playRound(choice, getComputerChoice()));
 }
